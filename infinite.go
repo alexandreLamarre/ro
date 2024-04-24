@@ -40,9 +40,16 @@ func Cycle[V any](seq []V) iter.Seq[V] {
 }
 
 func CycleIter[V any](seq iter.Seq[V]) iter.Seq[V] {
+	done := false
 	return func(yield func(V) bool) {
-		for v := range seq {
-			if !yield(v) {
+		for {
+			for v := range seq {
+				if !yield(v) {
+					done = true
+					break
+				}
+			}
+			if done {
 				break
 			}
 		}
