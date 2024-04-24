@@ -201,3 +201,31 @@ func PairWiseIter[T any](seq iter.Seq[T]) iter.Seq[[2]T] {
 		}
 	}
 }
+
+// While returns an iterator that yields elements until the predicate is false
+func While[T any](seq []T, predicate func(T) bool) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, v := range seq {
+			if !predicate(v) {
+				break
+			}
+			if !yield(v) {
+				break
+			}
+		}
+	}
+}
+
+// WhileIter returns an iterator that yields elements until the predicate is false
+func WhileIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for v := range seq {
+			if !predicate(v) {
+				break
+			}
+			if !yield(v) {
+				break
+			}
+		}
+	}
+}

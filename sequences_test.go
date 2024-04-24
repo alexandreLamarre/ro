@@ -230,3 +230,47 @@ func TestPairwiseIter(t *testing.T) {
 	}
 	assert.Equal(t, [][2]int{}, res3)
 }
+
+func TestWhile(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	res := []int{}
+	for v := range ro.While(seq, func(i int) bool { return i < 5 }) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4}, res)
+
+	empty := []int{}
+	res2 := []int{}
+	for v := range ro.While(empty, func(i int) bool { return i < 5 }) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+
+	all := []int{1, 2, 3, 4, 5}
+	res3 := []int{}
+	for v := range ro.While(all, func(i int) bool { return i < 6 }) {
+		res3 = append(res3, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
+}
+
+func TestWhileIter(t *testing.T) {
+	res := []int{}
+	for v := range ro.WhileIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8}), func(i int) bool { return i < 5 }) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4}, res)
+
+	res2 := []int{}
+	for v := range ro.WhileIter(ro.SeqAsIter([]int{}), func(i int) bool { return i < 5 }) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+
+	all := []int{1, 2, 3, 4, 5}
+	res3 := []int{}
+	for v := range ro.WhileIter(ro.SeqAsIter(all), func(i int) bool { return i < 6 }) {
+		res3 = append(res3, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
+}
