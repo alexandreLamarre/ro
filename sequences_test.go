@@ -155,3 +155,33 @@ func TestDropIter(t *testing.T) {
 	}
 	assert.Equal(t, []int{}, res2)
 }
+
+func TestFilter(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	res := []int{}
+	for v := range ro.Filter(seq, func(i int) bool { return i%3 == 0 }) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{3, 6, 9}, res)
+
+	empty := []int{}
+	res2 := []int{}
+	for v := range ro.Filter(empty, func(i int) bool { return i%3 == 0 }) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+}
+
+func TestFilterI(t *testing.T) {
+	res := []int{}
+	for v := range ro.FilterIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), func(i int) bool { return i%3 == 0 }) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{3, 6, 9}, res)
+
+	res2 := []int{}
+	for v := range ro.FilterIter(ro.SeqAsIter([]int{}), func(i int) bool { return i%3 == 0 }) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+}

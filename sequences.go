@@ -140,3 +140,27 @@ func DropIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 		}
 	}
 }
+
+func Filter[T any](seq []T, predicate func(T) bool) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, v := range seq {
+			if predicate(v) {
+				if !yield(v) {
+					break
+				}
+			}
+		}
+	}
+}
+
+func FilterIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for v := range seq {
+			if predicate(v) {
+				if !yield(v) {
+					break
+				}
+			}
+		}
+	}
+}
