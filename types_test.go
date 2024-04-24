@@ -14,4 +14,12 @@ func TestSeqAsIter(t *testing.T) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []string{"a", "b", "c"}, res)
+
+	i2 := ro.SeqAsIter([]int{})
+
+	res2 := []int{}
+	for v := range i2 {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
 }

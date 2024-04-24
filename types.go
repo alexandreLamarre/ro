@@ -27,6 +27,9 @@ type numberType interface {
 
 // SeqAsIter is a convenience wrapper to convert a slice to an iterator
 func SeqAsIter[T any](seq []T) iter.Seq[T] {
+	if len(seq) == 0 {
+		return empty[T]()
+	}
 	return func(yield func(T) bool) {
 		for _, v := range seq {
 			if !yield(v) {
