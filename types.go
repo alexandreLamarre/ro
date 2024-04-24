@@ -24,3 +24,14 @@ type numberType interface {
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
 	~float32 | ~float64 | ~complex64 | ~complex128
 }
+
+// SeqAsIter is a convenience wrapper to convert a slice to an iterator
+func SeqAsIter[T any](seq []T) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, v := range seq {
+			if !yield(v) {
+				break
+			}
+		}
+	}
+}
