@@ -259,3 +259,25 @@ func LimitIter[T any](seq iter.Seq[T], n int) iter.Seq[T] {
 		}
 	}
 }
+
+// Apply returns an iterator that yields the result of applying f to each element in seq
+func Apply[T, U any](seq []T, f func(T) U) iter.Seq[U] {
+	return func(yield func(U) bool) {
+		for _, v := range seq {
+			if !yield(f(v)) {
+				break
+			}
+		}
+	}
+}
+
+// ApplyIter returns an iterator that yields the result of applying f to each element yielded by seq
+func ApplyIter[T, U any](seq iter.Seq[T], f func(T) U) iter.Seq[U] {
+	return func(yield func(U) bool) {
+		for v := range seq {
+			if !yield(f(v)) {
+				break
+			}
+		}
+	}
+}
