@@ -45,6 +45,7 @@ func AccumulateFunc[T any](seq []T, f func(T, T) T) iter.Seq[T] {
 	}
 }
 
+// AccumulateIterFunc returns an iterator that yields the accumulated result of applying f to the elements yielded by seq
 func AccumulateIterFunc[T any](seq iter.Seq[T], f func(T, T) T) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		var agg T
@@ -53,6 +54,37 @@ func AccumulateIterFunc[T any](seq iter.Seq[T], f func(T, T) T) iter.Seq[T] {
 			if !yield(agg) {
 				break
 			}
+		}
+	}
+}
+
+// Batch returns an iterator that yields batches of size elements from seq
+func Batch[T any](seq []T, size int) iter.Seq[[]T] {
+	return func(yield func([]T) bool) {
+		for i := 0; i < len(seq); i += size {
+			end := min(i+size, len(seq))
+			if !yield(seq[i:end]) {
+				break
+			}
+		}
+	}
+}
+
+// BatchIter returns an iterator that yields batches of size elements yielded by seq
+func BatchIter[T any](seq iter.Seq[T], size int) iter.Seq[[]T] {
+	return func(yield func([]T) bool) {
+		batch := []T{}
+		for v := range seq {
+			batch = append(batch, v)
+			if len(batch) == size {
+				if !yield(batch) {
+					break
+				}
+				batch = []T{}
+			}
+		}
+		if len(batch) > 0 {
+			yield(batch)
 		}
 	}
 }

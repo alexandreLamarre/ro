@@ -67,3 +67,33 @@ func TestAccumulateIterFunc(t *testing.T) {
 	}
 	assert.Equal(t, []int{}, res2)
 }
+
+func TestBatch(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	res := [][]int{}
+	for v := range ro.Batch(seq, 3) {
+		res = append(res, v)
+	}
+	assert.Equal(t, [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}, res)
+
+	empty := []int{}
+	res2 := [][]int{}
+	for v := range ro.Batch(empty, 3) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, [][]int{}, res2)
+}
+
+func TestBatchIter(t *testing.T) {
+	res := [][]int{}
+	for v := range ro.BatchIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), 3) {
+		res = append(res, v)
+	}
+	assert.Equal(t, [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}, res)
+
+	res2 := [][]int{}
+	for v := range ro.BatchIter(ro.SeqAsIter([]int{}), 3) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, [][]int{}, res2)
+}
