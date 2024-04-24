@@ -30,3 +30,29 @@ func TestCount(t *testing.T) {
 	}
 	assert.Equal(t, []int{0, 1, 2, 3, 4}, res2)
 }
+
+func TestCycle(t *testing.T) {
+	s := []string{"a", "b", "c"}
+	res := []string{}
+	n := len(s) * 2
+	for v := range ro.Cycle(s) {
+		res = append(res, v)
+		n--
+		if n == 0 {
+			break
+		}
+	}
+	assert.Equal(t, []string{"a", "b", "c", "a", "b", "c"}, res)
+
+	nan := []int{}
+	res2 := []int{}
+	n = 10
+	for v := range ro.Cycle(nan) {
+		res2 = append(res2, v)
+		n--
+		if n == 0 {
+			break
+		}
+	}
+	assert.Equal(t, []int{}, res2)
+}
