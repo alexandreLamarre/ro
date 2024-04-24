@@ -88,3 +88,29 @@ func BatchIter[T any](seq iter.Seq[T], size int) iter.Seq[[]T] {
 		}
 	}
 }
+
+// Chain returns an iterator that yields the elements of seqs in order
+func Chain[T any](seqs ...[]T) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, seq := range seqs {
+			for _, v := range seq {
+				if !yield(v) {
+					return
+				}
+			}
+		}
+	}
+}
+
+// ChainIter returns an iterator that yields the elements yielded by seqs in order
+func ChainIter[T any](iterators ...iter.Seq[T]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, it := range iterators {
+			for v := range it {
+				if !yield(v) {
+					return
+				}
+			}
+		}
+	}
+}

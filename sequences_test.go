@@ -97,3 +97,31 @@ func TestBatchIter(t *testing.T) {
 	}
 	assert.Equal(t, [][]int{}, res2)
 }
+
+func TestChain(t *testing.T) {
+	res := []int{}
+	for v := range ro.Chain([]int{1, 2, 3}, []int{4, 5, 6}, []int{7, 8, 9}) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5, 6, 7, 8, 9}, res)
+
+	res2 := []int{}
+	for v := range ro.Chain([]int{}, []int{}, []int{}) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+}
+
+func TestChainIter(t *testing.T) {
+	res := []int{}
+	for v := range ro.ChainIter(ro.SeqAsIter([]int{1, 2, 3}), ro.SeqAsIter([]int{4, 5, 6}), ro.SeqAsIter([]int{7, 8, 9})) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5, 6, 7, 8, 9}, res)
+
+	res2 := []int{}
+	for v := range ro.ChainIter(ro.SeqAsIter([]int{}), ro.SeqAsIter([]int{}), ro.SeqAsIter([]int{})) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+}
