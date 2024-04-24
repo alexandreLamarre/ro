@@ -229,3 +229,33 @@ func WhileIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 		}
 	}
 }
+
+// Limit returns an iterator that yields the up to the first n elements of seq
+func Limit[T any](seq []T, n int) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for i, v := range seq {
+			if i >= n {
+				break
+			}
+			if !yield(v) {
+				break
+			}
+		}
+	}
+}
+
+// LimitIter returns an iterator that yields the up to the first n elements yielded by seq
+func LimitIter[T any](seq iter.Seq[T], n int) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		k := 0
+		for v := range seq {
+			if k >= n {
+				break
+			}
+			k++
+			if !yield(v) {
+				break
+			}
+		}
+	}
+}

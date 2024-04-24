@@ -274,3 +274,46 @@ func TestWhileIter(t *testing.T) {
 	}
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
 }
+
+func TestLimit(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	res := []int{}
+	for v := range ro.Limit(seq, 5) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res)
+
+	empty := []int{}
+	res2 := []int{}
+	for v := range ro.Limit(empty, 5) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+
+	all := []int{1, 2, 3, 4, 5}
+	res3 := []int{}
+	for v := range ro.Limit(all, 10) {
+		res3 = append(res3, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
+}
+
+func TestLimitIter(t *testing.T) {
+	res := []int{}
+	for v := range ro.LimitIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8}), 5) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res)
+	res2 := []int{}
+	for v := range ro.LimitIter(ro.SeqAsIter([]int{}), 5) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+
+	all := []int{1, 2, 3, 4, 5}
+	res3 := []int{}
+	for v := range ro.LimitIter(ro.SeqAsIter(all), 10) {
+		res3 = append(res3, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
+}
