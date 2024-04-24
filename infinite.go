@@ -38,3 +38,13 @@ func Cycle[V any](seq []V) iter.Seq[V] {
 		}
 	}
 }
+
+func CycleIter[V any](seq iter.Seq[V]) iter.Seq[V] {
+	return func(yield func(V) bool) {
+		for v := range seq {
+			if !yield(v) {
+				break
+			}
+		}
+	}
+}

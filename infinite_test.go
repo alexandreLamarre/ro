@@ -68,6 +68,32 @@ func TestCycle(t *testing.T) {
 	assert.Equal(t, []int{}, res2)
 }
 
+func TestCycleIter(t *testing.T) {
+	s := []string{"a", "b", "c"}
+	res := []string{}
+	n := len(s) * 2
+	for v := range ro.CycleIter(ro.SeqAsIter(s)) {
+		res = append(res, v)
+		n--
+		if n == 0 {
+			break
+		}
+	}
+	assert.Equal(t, []string{"a", "b", "c", "a", "b", "c"}, res)
+
+	nan := []int{}
+	res2 := []int{}
+	n = 10
+	for v := range ro.CycleIter(ro.SeqAsIter(nan)) {
+		res2 = append(res2, v)
+		n--
+		if n == 0 {
+			break
+		}
+	}
+	assert.Equal(t, []int{}, res2)
+}
+
 func TestRepeat(t *testing.T) {
 	res := []int{}
 	n := 3
