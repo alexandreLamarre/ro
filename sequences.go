@@ -141,6 +141,7 @@ func DropIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 	}
 }
 
+// Filter returns an iterator that yields elements matching the predicate
 func Filter[T any](seq []T, predicate func(T) bool) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for _, v := range seq {
@@ -153,6 +154,7 @@ func Filter[T any](seq []T, predicate func(T) bool) iter.Seq[T] {
 	}
 }
 
+// FilterIter returns an iterator that yields elements matching the predicate
 func FilterIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for v := range seq {
@@ -161,6 +163,41 @@ func FilterIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 					break
 				}
 			}
+		}
+	}
+}
+
+// Pairwise returns an iterator that yields pairs of adjacent elements in seq
+// If the sequence has less than 2 elements, the empty iterator is returned
+func PairWise[T any](seq []T) iter.Seq[[2]T] {
+	return func(yield func([2]T) bool) {
+		if len(seq) < 2 {
+			return
+		}
+		for i := 0; i < len(seq)-1; i++ {
+			if !yield([2]T{seq[i], seq[i+1]}) {
+				break
+			}
+		}
+	}
+}
+
+// PairWiseIter returns an iterator that yields pairs of adjacent elements yielded by seq
+// If the sequence has less than 2 elements, the empty iterator is returned
+func PairWiseIter[T any](seq iter.Seq[T]) iter.Seq[[2]T] {
+	return func(yield func([2]T) bool) {
+		var prev T
+		first := true
+		for v := range seq {
+			if first {
+				prev = v
+				first = false
+				continue
+			}
+			if !yield([2]T{prev, v}) {
+				break
+			}
+			prev = v
 		}
 	}
 }

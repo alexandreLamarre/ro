@@ -185,3 +185,48 @@ func TestFilterI(t *testing.T) {
 	}
 	assert.Equal(t, []int{}, res2)
 }
+
+func TestPairwise(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	res := [][2]int{}
+	for v := range ro.PairWise(seq) {
+		res = append(res, v)
+	}
+	assert.Equal(t, [][2]int{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}}, res)
+
+	empty := []int{}
+	res2 := [][2]int{}
+	for v := range ro.PairWise(empty) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, [][2]int{}, res2)
+
+	one := []int{1}
+	res3 := [][2]int{}
+	for v := range ro.PairWise(one) {
+		res3 = append(res3, v)
+	}
+	assert.Equal(t, [][2]int{}, res3)
+
+}
+
+func TestPairwiseIter(t *testing.T) {
+	res := [][2]int{}
+	for v := range ro.PairWiseIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8})) {
+		res = append(res, v)
+	}
+	assert.Equal(t, [][2]int{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}}, res)
+
+	res2 := [][2]int{}
+	for v := range ro.PairWiseIter(ro.SeqAsIter([]int{})) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, [][2]int{}, res2)
+
+	one := []int{1}
+	res3 := [][2]int{}
+	for v := range ro.PairWiseIter(ro.SeqAsIter(one)) {
+		res3 = append(res3, v)
+	}
+	assert.Equal(t, [][2]int{}, res3)
+}
