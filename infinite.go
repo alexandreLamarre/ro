@@ -13,6 +13,11 @@ func Count[i intType](start, step i) iter.Seq[i] {
 	}
 }
 
+// Repeat returns an infinite iterator that yields elem indefinitely
+func Repeat[i intType](elem i) iter.Seq[i] {
+	return Count(elem, 0)
+}
+
 // Cycle returns an infinite iterator that cycles repeatedly through the elements of seq
 func Cycle[V any](seq []V) iter.Seq[V] {
 	done := false

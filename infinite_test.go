@@ -67,3 +67,27 @@ func TestCycle(t *testing.T) {
 	}
 	assert.Equal(t, []int{}, res2)
 }
+
+func TestRepeat(t *testing.T) {
+	res := []int{}
+	n := 3
+	for v := range ro.Repeat(1) {
+		res = append(res, v)
+		n--
+		if n == 0 {
+			break
+		}
+	}
+	assert.Equal(t, []int{1, 1, 1}, res)
+
+	res2 := []int8{}
+	n = 5
+	for v := range ro.Repeat(int8(2)) {
+		res2 = append(res2, v)
+		n--
+		if n == 0 {
+			break
+		}
+	}
+	assert.Equal(t, []int8{2, 2, 2, 2, 2}, res2)
+}
