@@ -39,6 +39,7 @@ func Cycle[V any](seq []V) iter.Seq[V] {
 	}
 }
 
+// CycleIter returns an infinite iterator that cycles repeatedly through the elements of seq
 func CycleIter[V any](seq iter.Seq[V]) iter.Seq[V] {
 	done := false
 	return func(yield func(V) bool) {
