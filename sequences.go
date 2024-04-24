@@ -114,3 +114,29 @@ func ChainIter[T any](iterators ...iter.Seq[T]) iter.Seq[T] {
 		}
 	}
 }
+
+// Drop returns an iterator that yields elements not matching the predicate
+func Drop[T any](seq []T, predicate func(T) bool) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, v := range seq {
+			if !predicate(v) {
+				if !yield(v) {
+					break
+				}
+			}
+		}
+	}
+}
+
+// DropIter returns an iterator that yields elements not matching the predicate
+func DropIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for v := range seq {
+			if !predicate(v) {
+				if !yield(v) {
+					break
+				}
+			}
+		}
+	}
+}

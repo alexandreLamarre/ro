@@ -125,3 +125,33 @@ func TestChainIter(t *testing.T) {
 	}
 	assert.Equal(t, []int{}, res2)
 }
+
+func TestDrop(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	res := []int{}
+	for v := range ro.Drop(seq, func(i int) bool { return i%3 == 0 }) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 4, 5, 7, 8}, res)
+
+	empty := []int{}
+	res2 := []int{}
+	for v := range ro.Drop(empty, func(i int) bool { return i%3 == 0 }) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+}
+
+func TestDropIter(t *testing.T) {
+	res := []int{}
+	for v := range ro.DropIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), func(i int) bool { return i%3 == 0 }) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 4, 5, 7, 8}, res)
+
+	res2 := []int{}
+	for v := range ro.DropIter(ro.SeqAsIter([]int{}), func(i int) bool { return i%3 == 0 }) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+}
