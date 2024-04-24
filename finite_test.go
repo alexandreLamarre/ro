@@ -1,3 +1,5 @@
+//go:build goexperiment.rangefunc
+
 package ro_test
 
 import (

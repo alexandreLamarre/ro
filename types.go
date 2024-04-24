@@ -1,9 +1,11 @@
+//go:build goexperiment.rangefunc
+
 package ro
 
 import "iter"
 
 func empty[E any]() iter.Seq[E] {
-	return func(yield func(E) bool) {}
+	return func(_ func(E) bool) {}
 }
 
 type intType interface {
