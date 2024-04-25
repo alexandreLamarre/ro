@@ -89,3 +89,31 @@ func ZipFillIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V], fillU U, fillV V)
 		}
 	}
 }
+
+// Product returns an iterator that yields the cartesian product of seq1 and seq2 as a tuple.
+// The returned iterator of tuples is ordered [A1, B1], [A1, B2], [A2, B1], [A2, B2], ...
+func Product[U, V any](seq1 []U, seq2 []V) iter.Seq[lo.Tuple2[U, V]] {
+	return func(yield func(lo.Tuple2[U, V]) bool) {
+		for _, u := range seq1 {
+			for _, v := range seq2 {
+				if !yield(lo.Tuple2[U, V]{A: u, B: v}) {
+					return
+				}
+			}
+		}
+	}
+}
+
+// ProductIter returns an iterator that yields the cartesian product of seq1 and seq2 as a tuple.
+// The returned iterator of tuples is ordered [A1, B1], [A1, B2], [A2, B1], [A2, B2], ...
+func ProductIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U, V]] {
+	return func(yield func(lo.Tuple2[U, V]) bool) {
+		for u := range seq1 {
+			for v := range seq2 {
+				if !yield(lo.Tuple2[U, V]{A: u, B: v}) {
+					return
+				}
+			}
+		}
+	}
+}

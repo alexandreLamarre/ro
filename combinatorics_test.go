@@ -131,3 +131,69 @@ func TestZipFillIter(t *testing.T) {
 		},
 	}, res2)
 }
+
+func TestProduct(t *testing.T) {
+	res := []lo.Tuple2[int, int]{}
+	for v := range ro.Product([]int{1, 2, 3}, []int{4, 5}) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []lo.Tuple2[int, int]{
+		{
+			A: 1,
+			B: 4,
+		},
+		{
+			A: 1,
+			B: 5,
+		},
+		{
+			A: 2,
+			B: 4,
+		},
+		{
+			A: 2,
+			B: 5,
+		},
+		{
+			A: 3,
+			B: 4,
+		},
+		{
+			A: 3,
+			B: 5,
+		},
+	}, res)
+}
+
+func TestProductIter(t *testing.T) {
+	res := []lo.Tuple2[int, int]{}
+	for v := range ro.ProductIter(ro.SeqAsIter([]int{1, 2, 3}), ro.SeqAsIter([]int{4, 5})) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []lo.Tuple2[int, int]{
+		{
+			A: 1,
+			B: 4,
+		},
+		{
+			A: 1,
+			B: 5,
+		},
+		{
+			A: 2,
+			B: 4,
+		},
+		{
+			A: 2,
+			B: 5,
+		},
+		{
+			A: 3,
+			B: 4,
+		},
+		{
+			A: 3,
+			B: 5,
+		},
+	}, res)
+}
