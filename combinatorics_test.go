@@ -197,3 +197,23 @@ func TestProductIter(t *testing.T) {
 		},
 	}, res)
 }
+
+func TestPermutations(t *testing.T) {
+	res := [][]int{}
+	for v := range ro.Permutations([]int{1, 2, 3}, 2) {
+		res = append(res, v)
+	}
+	assert.Equal(t, [][]int{{1, 2}, {2, 1}, {3, 1}, {1, 3}, {2, 3}, {3, 2}}, res)
+
+	res2 := [][]int{}
+	for v := range ro.Permutations([]int{1, 2, 3}, 3) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, [][]int{{1, 2, 3}, {2, 1, 3}, {3, 1, 2}, {1, 3, 2}, {2, 3, 1}, {3, 2, 1}}, res2)
+
+	res3 := [][]int{}
+	for v := range ro.Permutations([]int{1, 2, 3}, 0) {
+		res3 = append(res3, v)
+	}
+	assert.Equal(t, [][]int{}, res3)
+}
