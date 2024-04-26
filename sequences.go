@@ -281,3 +281,22 @@ func ApplyIter[T, U any](seq iter.Seq[T], f func(T) U) iter.Seq[U] {
 		}
 	}
 }
+
+// Tee returns n iterators that yield the elements of seq.
+// If n == 1, the only element in the slice will be the original seq
+func Tee[T any](seq iter.Seq[T], n int) []iter.Seq[T] {
+	if n == 1 {
+		return []iter.Seq[T]{seq}
+	}
+	res := []iter.Seq[T]{}
+	for i := 0; i < n; i++ {
+		res = append(res, func(yield func(T) bool) {
+			for v := range seq {
+				if !yield(v) {
+					break
+				}
+			}
+		})
+	}
+	return res
+}

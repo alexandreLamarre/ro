@@ -40,3 +40,14 @@ func SeqAsIter[T any](seq []T) iter.Seq[T] {
 		}
 	}
 }
+
+// StringAsSeq is a convenience wrapper to convert a string to an iterator
+func StringAsSeq(s string) iter.Seq[rune] {
+	return func(yield func(rune) bool) {
+		for _, r := range s {
+			if !yield(r) {
+				break
+			}
+		}
+	}
+}

@@ -347,3 +347,26 @@ func TestApplyIter(t *testing.T) {
 	}
 	assert.Equal(t, []int{}, res2)
 }
+
+func TestTee(t *testing.T) {
+	iters := ro.Tee(ro.SeqAsIter([]int{1, 2, 3, 4, 5}), 3)
+
+	res := []int{}
+	res1 := []int{}
+	res2 := []int{}
+	for v := range iters[0] {
+		res = append(res, v)
+	}
+	for v := range iters[1] {
+		res1 = append(res1, v)
+	}
+	for v := range iters[2] {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res)
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res1)
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res2)
+
+	noiters := ro.Tee(ro.SeqAsIter([]int{1, 2, 3, 4}), -5)
+	assert.Len(t, noiters, 0)
+}
