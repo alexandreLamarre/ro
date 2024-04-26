@@ -367,6 +367,6 @@ func TestTee(t *testing.T) {
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, res1)
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, res2)
 
-	no_iters := ro.Tee(ro.SeqAsIter([]int{1, 2, 3, 4}), -5)
-	assert.Len(t, no_iters, 0)
+	noiters := ro.Tee(ro.SeqAsIter([]int{1, 2, 3, 4}), -5)
+	assert.Len(t, noiters, 0)
 }
