@@ -120,12 +120,17 @@ func ProductIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple
 
 // Permutations returns an iterator that yields all possible n-length permutations of seq
 // If k <= 0, the empty iterator is returned.
+// If k > len(seq), the iterator yields all permutations of seq
 //
 // Note : allocates a state buffer of the same size as the input to keep track of visited permutations
 // as we iterate through them.
 func Permutations[T any](seq []T, k int) iter.Seq[[]T] {
 	if k <= 0 {
 		return empty[[]T]()
+	}
+
+	if k > len(seq) {
+		k = len(seq)
 	}
 
 	return func(yield func([]T) bool) {

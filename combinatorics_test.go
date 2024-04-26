@@ -216,4 +216,10 @@ func TestPermutations(t *testing.T) {
 		res3 = append(res3, v)
 	}
 	assert.Equal(t, [][]int{}, res3)
+
+	res4 := [][]int{}
+	for v := range ro.Permutations([]int{1, 2, 3}, 3) {
+		res4 = append(res4, v)
+	}
+	assert.Equal(t, [][]int{{1, 2, 3}, {2, 1, 3}, {3, 1, 2}, {1, 3, 2}, {2, 3, 1}, {3, 2, 1}}, res4)
 }
