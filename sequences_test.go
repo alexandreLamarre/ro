@@ -3,6 +3,8 @@
 package ro_test
 
 import (
+	"fmt"
+	"sync"
 	"testing"
 
 	"github.com/alexandreLamarre/ro"
@@ -369,4 +371,35 @@ func TestTee(t *testing.T) {
 
 	noiters := ro.Tee(ro.SeqAsIter([]int{1, 2, 3, 4}), -5)
 	assert.Len(t, noiters, 0)
+
+	type testStruct struct {
+		val string
+	}
+
+	iters2 := ro.Tee(ro.SeqAsIter([]*testStruct{{val: "a"}, {val: "b"}, {val: "c"}}), 3)
+	resMut := [][]*testStruct{{}, {}, {}}
+
+	var wg sync.WaitGroup
+	for i, iterS := range iters2 {
+		i := i
+		iterS := iterS
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for item := range iterS {
+				item = &testStruct{val: fmt.Sprintf("replace%d", i)}
+				resMut[i] = append(resMut[i], item)
+			}
+		}()
+
+	}
+	wg.Wait()
+
+	for i, v := range resMut {
+		assert.Len(t, v, 3)
+		for _, item := range v {
+			assert.Equal(t, fmt.Sprintf("replace%d", i), item.val)
+		}
+	}
+
 }
