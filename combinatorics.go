@@ -4,6 +4,7 @@ package ro
 
 import (
 	"iter"
+	"math/bits"
 
 	"github.com/samber/lo"
 )
@@ -162,4 +163,36 @@ func Permutations[T any](seq []T, k int) iter.Seq[[]T] {
 			}
 		}
 	}
+}
+
+// Combinations returns an iterator that yields all possible k-length combinations of seq
+// If k <= 0, the empty iterator is returned.
+// If k > len(seq), the iterator yields all combinations of seq
+func Combinations[T any](seq []T, k int) iter.Seq[[]T] {
+	length := uint(len(seq))
+	if k <= 0 {
+		return empty[[]T]()
+	}
+	if k > len(seq) {
+		k = len(seq)
+	}
+	return func(yield func([]T) bool) {
+		for subsetBits := 1; subsetBits < (1 << length); subsetBits++ {
+			if k > 0 && bits.OnesCount(uint(subsetBits)) != k {
+				continue
+			}
+
+			var subset []T
+
+			for object := uint(0); object < length; object++ {
+				if (subsetBits>>object)&1 == 1 {
+					subset = append(subset, seq[object])
+				}
+			}
+			if !yield(subset) {
+				break
+			}
+		}
+	}
+
 }

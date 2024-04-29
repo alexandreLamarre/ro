@@ -223,3 +223,17 @@ func TestPermutations(t *testing.T) {
 	}
 	assert.Equal(t, [][]int{{1, 2, 3}, {2, 1, 3}, {3, 1, 2}, {1, 3, 2}, {2, 3, 1}, {3, 2, 1}}, res4)
 }
+
+func TestCombinations(t *testing.T) {
+	res := [][]string{}
+	for v := range ro.Combinations([]string{"A", "B", "C", "D"}, 2) {
+		res = append(res, v)
+	}
+	assert.Equal(t, [][]string{{"A", "B"}, {"A", "C"}, {"B", "C"}, {"A", "D"}, {"B", "D"}, {"C", "D"}}, res)
+
+	res2 := [][]string{}
+	for v := range ro.Combinations([]string{"A", "B", "C", "D"}, 0) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, [][]string{}, res2)
+}
