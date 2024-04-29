@@ -386,6 +386,7 @@ func TestTee(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			// nolint:ineffassign
 			for item := range iterS {
 				item = &testStruct{val: fmt.Sprintf("replace%d", i)}
 				resMut[i] = append(resMut[i], item)
