@@ -4,6 +4,8 @@ go 1.22.2
 
 require (
 	github.com/samber/lo v1.39.0
+	// test dependencies are excluded from CI
+
 	github.com/stretchr/testify v1.9.0
 )
 
