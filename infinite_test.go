@@ -74,7 +74,7 @@ func TestCycleIter(t *testing.T) {
 	s := []string{"a", "b", "c"}
 	res := []string{}
 	n := len(s) * 2
-	for v := range ro.CycleIter(ro.SeqAsIter(s)) {
+	for v := range ro.CycleIter(ro.FromSlice(s)) {
 		res = append(res, v)
 		n--
 		if n == 0 {

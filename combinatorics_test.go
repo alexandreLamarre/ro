@@ -33,7 +33,7 @@ func TestZip(t *testing.T) {
 
 func TestZipIter(t *testing.T) {
 	res := []lo.Tuple2[int, int]{}
-	for v := range ro.ZipIter(ro.SeqAsIter([]int{1, 2, 3}), ro.SeqAsIter([]int{4, 5, 6})) {
+	for v := range ro.ZipIter(ro.FromSlice([]int{1, 2, 3}), ro.FromSlice([]int{4, 5, 6})) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []lo.Tuple2[int, int]{
@@ -94,7 +94,7 @@ func TestZipFill(t *testing.T) {
 
 func TestZipFillIter(t *testing.T) {
 	res := []lo.Tuple2[int, int]{}
-	for v := range ro.ZipFillIter(ro.SeqAsIter([]int{1, 2, 3}), ro.SeqAsIter([]int{4, 5}), -1, -2) {
+	for v := range ro.ZipFillIter(ro.FromSlice([]int{1, 2, 3}), ro.FromSlice([]int{4, 5}), -1, -2) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []lo.Tuple2[int, int]{
@@ -113,7 +113,7 @@ func TestZipFillIter(t *testing.T) {
 	}, res)
 
 	res2 := []lo.Tuple2[int, int]{}
-	for v := range ro.ZipFillIter(ro.SeqAsIter([]int{1, 2}), ro.SeqAsIter([]int{4, 5, 6}), -1, -2) {
+	for v := range ro.ZipFillIter(ro.FromSlice([]int{1, 2}), ro.FromSlice([]int{4, 5, 6}), -1, -2) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []lo.Tuple2[int, int]{
@@ -167,7 +167,7 @@ func TestProduct(t *testing.T) {
 
 func TestProductIter(t *testing.T) {
 	res := []lo.Tuple2[int, int]{}
-	for v := range ro.ProductIter(ro.SeqAsIter([]int{1, 2, 3}), ro.SeqAsIter([]int{4, 5})) {
+	for v := range ro.ProductIter(ro.FromSlice([]int{1, 2, 3}), ro.FromSlice([]int{4, 5})) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []lo.Tuple2[int, int]{

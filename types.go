@@ -27,13 +27,13 @@ type numberType interface {
 	~float32 | ~float64 | ~complex64 | ~complex128
 }
 
-// SeqAsIter is a convenience wrapper to convert a slice to an iterator
-func SeqAsIter[T any](seq []T) iter.Seq[T] {
-	if len(seq) == 0 {
+// FromSlice is a convenience wrapper to convert a slice to an iterator
+func FromSlice[T any](arr []T) iter.Seq[T] {
+	if len(arr) == 0 {
 		return empty[T]()
 	}
 	return func(yield func(T) bool) {
-		for _, v := range seq {
+		for _, v := range arr {
 			if !yield(v) {
 				break
 			}
@@ -41,8 +41,8 @@ func SeqAsIter[T any](seq []T) iter.Seq[T] {
 	}
 }
 
-// StringAsSeq is a convenience wrapper to convert a string to an iterator
-func StringAsSeq(s string) iter.Seq[rune] {
+// FromString is a convenience wrapper to convert a string to an iterator
+func FromString(s string) iter.Seq[rune] {
 	return func(yield func(rune) bool) {
 		for _, r := range s {
 			if !yield(r) {
