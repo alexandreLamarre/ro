@@ -12,6 +12,8 @@ jobs:
   test:
     uses : alexandreLamarre/ro/.github/workflows/test.yaml@main
   release:
+    permissions:
+      contents: write
     if: github.triggering_actor == 'alexandreLamarre'
     needs : [
       test
