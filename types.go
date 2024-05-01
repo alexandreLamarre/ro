@@ -2,7 +2,10 @@
 
 package ro
 
-import "iter"
+import (
+	"context"
+	"iter"
+)
 
 func empty[T any]() iter.Seq[T] {
 	return func(_ func(T) bool) {}
@@ -26,6 +29,12 @@ type numberType interface {
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
 	~float32 | ~float64 | ~complex64 | ~complex128
 }
+
+// SeqCtx is a convenience wrapper to convert an iterator to a context iterator
+type SeqCtx[T any] iter.Seq2[context.Context, T]
+
+// SeqErr is a convenience wrapper to convert an iterator to an error iterator
+type SeqErr[T any] iter.Seq2[T, error]
 
 // ToSlice is a convenience wrapper to convert an iterator to a slice
 //
