@@ -4,8 +4,8 @@ package ro
 
 import "iter"
 
-func empty[E any]() iter.Seq[E] {
-	return func(_ func(E) bool) {}
+func empty[T any]() iter.Seq[T] {
+	return func(_ func(T) bool) {}
 }
 
 type intType interface {
