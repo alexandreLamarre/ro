@@ -62,3 +62,14 @@ func FromString(s string) iter.Seq[rune] {
 		}
 	}
 }
+
+// Extend pads an iterator with an empty struct to conform to an iter.Seq2 type
+func Extend[T any](seq iter.Seq[T]) iter.Seq2[struct{}, T] {
+	return func(yield func(struct{}, T) bool) {
+		for v := range seq {
+			if !yield(struct{}{}, v) {
+				break
+			}
+		}
+	}
+}

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/alexandreLamarre/ro"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -60,4 +61,27 @@ func TestFromString(t *testing.T) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []rune{}, res2)
+}
+
+func iter2ToTuple[U, V any](seq iter.Seq2[U, V]) []lo.Tuple2[U, V] {
+	res := []lo.Tuple2[U, V]{}
+	for k, v := range seq {
+		res = append(res, lo.Tuple2[U, V]{A: k, B: v})
+	}
+	return res
+}
+
+func TestExtend(t *testing.T) {
+	i := ro.FromSlice([]int{1, 2, 3})
+	kv := ro.Extend(i)
+
+	assert.Equal(t, []lo.Tuple2[struct{}, int]{
+		{A: struct{}{}, B: 1},
+		{A: struct{}{}, B: 2},
+		{A: struct{}{}, B: 3},
+	}, iter2ToTuple(kv))
+
+	i2 := ro.FromSlice([]string{})
+	kv2 := ro.Extend(i2)
+	assert.Equal(t, []lo.Tuple2[struct{}, string]{}, iter2ToTuple(kv2))
 }
