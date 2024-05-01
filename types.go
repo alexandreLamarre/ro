@@ -27,6 +27,17 @@ type numberType interface {
 	~float32 | ~float64 | ~complex64 | ~complex128
 }
 
+// ToSlice is a convenience wrapper to convert an iterator to a slice
+//
+// This will block until the iterator is exhausted.
+func ToSlice[T any](seq iter.Seq[T]) []T {
+	res := []T{}
+	for v := range seq {
+		res = append(res, v)
+	}
+	return res
+}
+
 // FromSlice is a convenience wrapper to convert a slice to an iterator
 func FromSlice[T any](arr []T) iter.Seq[T] {
 	if len(arr) == 0 {
