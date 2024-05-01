@@ -285,7 +285,7 @@ func Apply[U, V any](seq iter.Seq[U], f func(U) V) iter.Seq[V] {
 // Unpack returns two iterators that yield the keys and values of the sequence
 func Unpack[U, V any](seq iter.Seq2[U, V]) (iter.Seq[U], iter.Seq[V]) {
 	keys := func(yield func(U) bool) {
-		// nolint:gofmt
+		// nolint:revive
 		for k, _ := range seq {
 			if !yield(k) {
 				break
