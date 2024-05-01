@@ -11,10 +11,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAccumulate(t *testing.T) {
+func TestAccumulateSlice(t *testing.T) {
 	seq := []int{1, 2, 3, 4}
 	res := []int{}
-	for v := range ro.Accumulate(seq) {
+	for v := range ro.AccumulateSlice(seq) {
 		res = append(res, v)
 	}
 
@@ -22,21 +22,35 @@ func TestAccumulate(t *testing.T) {
 
 	empty := []int{}
 	res2 := []int{}
-	for v := range ro.Accumulate(empty) {
+	for v := range ro.AccumulateSlice(empty) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 }
 
-func TestAccumulateIter(t *testing.T) {
+func TestAccumulate(t *testing.T) {
 	res := []int{}
-	for v := range ro.AccumulateIter(ro.SeqAsIter([]int{1, 2, 3, 4})) {
+	for v := range ro.Accumulate(ro.FromSlice([]int{1, 2, 3, 4})) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []int{1, 3, 6, 10}, res)
 
 	res2 := []int{}
-	for v := range ro.AccumulateIter(ro.SeqAsIter([]int{})) {
+	for v := range ro.Accumulate(ro.FromSlice([]int{})) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+}
+
+func TestAccumulateFuncSlice(t *testing.T) {
+	res := [][]string{}
+	for v := range ro.AccumulateFuncSlice([][]string{{"a", "b"}, {"c", "d"}}, func(a, b []string) []string { return append(a, b...) }) {
+		res = append(res, v)
+	}
+	assert.Equal(t, [][]string{{"a", "b"}, {"a", "b", "c", "d"}}, res)
+
+	res2 := []int{}
+	for v := range ro.AccumulateFuncSlice([]int{}, func(a, b int) int { return a % b }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
@@ -44,314 +58,300 @@ func TestAccumulateIter(t *testing.T) {
 
 func TestAccumulateFunc(t *testing.T) {
 	res := [][]string{}
-	for v := range ro.AccumulateFunc([][]string{{"a", "b"}, {"c", "d"}}, func(a, b []string) []string { return append(a, b...) }) {
+	for v := range ro.AccumulateFunc(ro.FromSlice([][]string{{"a", "b"}, {"c", "d"}}), func(a, b []string) []string { return append(a, b...) }) {
 		res = append(res, v)
 	}
 	assert.Equal(t, [][]string{{"a", "b"}, {"a", "b", "c", "d"}}, res)
 
 	res2 := []int{}
-	for v := range ro.AccumulateFunc([]int{}, func(a, b int) int { return a % b }) {
+	for v := range ro.AccumulateFunc(ro.FromSlice([]int{}), func(a, b int) int { return a % b }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 }
 
-func TestAccumulateIterFunc(t *testing.T) {
-	res := [][]string{}
-	for v := range ro.AccumulateIterFunc(ro.SeqAsIter([][]string{{"a", "b"}, {"c", "d"}}), func(a, b []string) []string { return append(a, b...) }) {
-		res = append(res, v)
-	}
-	assert.Equal(t, [][]string{{"a", "b"}, {"a", "b", "c", "d"}}, res)
-
-	res2 := []int{}
-	for v := range ro.AccumulateIterFunc(ro.SeqAsIter([]int{}), func(a, b int) int { return a % b }) {
-		res2 = append(res2, v)
-	}
-	assert.Equal(t, []int{}, res2)
-}
-
-func TestBatch(t *testing.T) {
+func TestBatchSlice(t *testing.T) {
 	seq := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	res := [][]int{}
-	for v := range ro.Batch(seq, 3) {
+	for v := range ro.BatchSlice(seq, 3) {
 		res = append(res, v)
 	}
 	assert.Equal(t, [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}, res)
 
 	empty := []int{}
 	res2 := [][]int{}
-	for v := range ro.Batch(empty, 3) {
+	for v := range ro.BatchSlice(empty, 3) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, [][]int{}, res2)
 }
 
-func TestBatchIter(t *testing.T) {
+func TestBatch(t *testing.T) {
 	res := [][]int{}
-	for v := range ro.BatchIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), 3) {
+	for v := range ro.Batch(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), 3) {
 		res = append(res, v)
 	}
 	assert.Equal(t, [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}, res)
 
 	res2 := [][]int{}
-	for v := range ro.BatchIter(ro.SeqAsIter([]int{}), 3) {
+	for v := range ro.Batch(ro.FromSlice([]int{}), 3) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, [][]int{}, res2)
 }
 
-func TestChain(t *testing.T) {
+func TestChainSlice(t *testing.T) {
 	res := []int{}
-	for v := range ro.Chain([]int{1, 2, 3}, []int{4, 5, 6}, []int{7, 8, 9}) {
+	for v := range ro.ChainSlice([]int{1, 2, 3}, []int{4, 5, 6}, []int{7, 8, 9}) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []int{1, 2, 3, 4, 5, 6, 7, 8, 9}, res)
 
 	res2 := []int{}
-	for v := range ro.Chain([]int{}, []int{}, []int{}) {
+	for v := range ro.ChainSlice([]int{}, []int{}, []int{}) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 }
 
-func TestChainIter(t *testing.T) {
+func TestChain(t *testing.T) {
 	res := []int{}
-	for v := range ro.ChainIter(ro.SeqAsIter([]int{1, 2, 3}), ro.SeqAsIter([]int{4, 5, 6}), ro.SeqAsIter([]int{7, 8, 9})) {
+	for v := range ro.Chain(ro.FromSlice([]int{1, 2, 3}), ro.FromSlice([]int{4, 5, 6}), ro.FromSlice([]int{7, 8, 9})) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []int{1, 2, 3, 4, 5, 6, 7, 8, 9}, res)
 
 	res2 := []int{}
-	for v := range ro.ChainIter(ro.SeqAsIter([]int{}), ro.SeqAsIter([]int{}), ro.SeqAsIter([]int{})) {
+	for v := range ro.Chain(ro.FromSlice([]int{}), ro.FromSlice([]int{}), ro.FromSlice([]int{})) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+}
+
+func TestDropSlice(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	res := []int{}
+	for v := range ro.DropSlice(seq, func(i int) bool { return i%3 == 0 }) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 4, 5, 7, 8}, res)
+
+	empty := []int{}
+	res2 := []int{}
+	for v := range ro.DropSlice(empty, func(i int) bool { return i%3 == 0 }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 }
 
 func TestDrop(t *testing.T) {
-	seq := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	res := []int{}
-	for v := range ro.Drop(seq, func(i int) bool { return i%3 == 0 }) {
+	for v := range ro.Drop(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), func(i int) bool { return i%3 == 0 }) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []int{1, 2, 4, 5, 7, 8}, res)
 
-	empty := []int{}
 	res2 := []int{}
-	for v := range ro.Drop(empty, func(i int) bool { return i%3 == 0 }) {
+	for v := range ro.Drop(ro.FromSlice([]int{}), func(i int) bool { return i%3 == 0 }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 }
 
-func TestDropIter(t *testing.T) {
+func TestFilterSlice(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	res := []int{}
-	for v := range ro.DropIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), func(i int) bool { return i%3 == 0 }) {
+	for v := range ro.FilterSlice(seq, func(i int) bool { return i%3 == 0 }) {
 		res = append(res, v)
 	}
-	assert.Equal(t, []int{1, 2, 4, 5, 7, 8}, res)
+	assert.Equal(t, []int{3, 6, 9}, res)
 
+	empty := []int{}
 	res2 := []int{}
-	for v := range ro.DropIter(ro.SeqAsIter([]int{}), func(i int) bool { return i%3 == 0 }) {
+	for v := range ro.FilterSlice(empty, func(i int) bool { return i%3 == 0 }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 }
 
 func TestFilter(t *testing.T) {
-	seq := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	res := []int{}
-	for v := range ro.Filter(seq, func(i int) bool { return i%3 == 0 }) {
+	for v := range ro.Filter(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), func(i int) bool { return i%3 == 0 }) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []int{3, 6, 9}, res)
 
-	empty := []int{}
 	res2 := []int{}
-	for v := range ro.Filter(empty, func(i int) bool { return i%3 == 0 }) {
+	for v := range ro.Filter(ro.FromSlice([]int{}), func(i int) bool { return i%3 == 0 }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 }
 
-func TestFilterI(t *testing.T) {
-	res := []int{}
-	for v := range ro.FilterIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), func(i int) bool { return i%3 == 0 }) {
+func TestPairwiseSlice(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	res := [][2]int{}
+	for v := range ro.PairWiseSlice(seq) {
 		res = append(res, v)
 	}
-	assert.Equal(t, []int{3, 6, 9}, res)
+	assert.Equal(t, [][2]int{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}}, res)
 
-	res2 := []int{}
-	for v := range ro.FilterIter(ro.SeqAsIter([]int{}), func(i int) bool { return i%3 == 0 }) {
+	empty := []int{}
+	res2 := [][2]int{}
+	for v := range ro.PairWiseSlice(empty) {
 		res2 = append(res2, v)
 	}
-	assert.Equal(t, []int{}, res2)
+	assert.Equal(t, [][2]int{}, res2)
+
+	one := []int{1}
+	res3 := [][2]int{}
+	for v := range ro.PairWiseSlice(one) {
+		res3 = append(res3, v)
+	}
+	assert.Equal(t, [][2]int{}, res3)
+
 }
 
 func TestPairwise(t *testing.T) {
-	seq := []int{1, 2, 3, 4, 5, 6, 7, 8}
 	res := [][2]int{}
-	for v := range ro.PairWise(seq) {
+	for v := range ro.PairWise(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8})) {
 		res = append(res, v)
 	}
 	assert.Equal(t, [][2]int{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}}, res)
 
-	empty := []int{}
 	res2 := [][2]int{}
-	for v := range ro.PairWise(empty) {
+	for v := range ro.PairWise(ro.FromSlice([]int{})) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, [][2]int{}, res2)
 
 	one := []int{1}
 	res3 := [][2]int{}
-	for v := range ro.PairWise(one) {
-		res3 = append(res3, v)
-	}
-	assert.Equal(t, [][2]int{}, res3)
-
-}
-
-func TestPairwiseIter(t *testing.T) {
-	res := [][2]int{}
-	for v := range ro.PairWiseIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8})) {
-		res = append(res, v)
-	}
-	assert.Equal(t, [][2]int{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}}, res)
-
-	res2 := [][2]int{}
-	for v := range ro.PairWiseIter(ro.SeqAsIter([]int{})) {
-		res2 = append(res2, v)
-	}
-	assert.Equal(t, [][2]int{}, res2)
-
-	one := []int{1}
-	res3 := [][2]int{}
-	for v := range ro.PairWiseIter(ro.SeqAsIter(one)) {
+	for v := range ro.PairWise(ro.FromSlice(one)) {
 		res3 = append(res3, v)
 	}
 	assert.Equal(t, [][2]int{}, res3)
 }
 
-func TestWhile(t *testing.T) {
+func TestWhileSlice(t *testing.T) {
 	seq := []int{1, 2, 3, 4, 5, 6, 7, 8}
 	res := []int{}
-	for v := range ro.While(seq, func(i int) bool { return i < 5 }) {
+	for v := range ro.WhileSlice(seq, func(i int) bool { return i < 5 }) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []int{1, 2, 3, 4}, res)
 
 	empty := []int{}
 	res2 := []int{}
-	for v := range ro.While(empty, func(i int) bool { return i < 5 }) {
+	for v := range ro.WhileSlice(empty, func(i int) bool { return i < 5 }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 
 	all := []int{1, 2, 3, 4, 5}
 	res3 := []int{}
-	for v := range ro.While(all, func(i int) bool { return i < 6 }) {
+	for v := range ro.WhileSlice(all, func(i int) bool { return i < 6 }) {
 		res3 = append(res3, v)
 	}
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
 }
 
-func TestWhileIter(t *testing.T) {
+func TestWhile(t *testing.T) {
 	res := []int{}
-	for v := range ro.WhileIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8}), func(i int) bool { return i < 5 }) {
+	for v := range ro.While(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8}), func(i int) bool { return i < 5 }) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []int{1, 2, 3, 4}, res)
 
 	res2 := []int{}
-	for v := range ro.WhileIter(ro.SeqAsIter([]int{}), func(i int) bool { return i < 5 }) {
+	for v := range ro.While(ro.FromSlice([]int{}), func(i int) bool { return i < 5 }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 
 	all := []int{1, 2, 3, 4, 5}
 	res3 := []int{}
-	for v := range ro.WhileIter(ro.SeqAsIter(all), func(i int) bool { return i < 6 }) {
+	for v := range ro.While(ro.FromSlice(all), func(i int) bool { return i < 6 }) {
+		res3 = append(res3, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
+}
+
+func TestLimitSlice(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	res := []int{}
+	for v := range ro.LimitSlice(seq, 5) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res)
+
+	empty := []int{}
+	res2 := []int{}
+	for v := range ro.LimitSlice(empty, 5) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+
+	all := []int{1, 2, 3, 4, 5}
+	res3 := []int{}
+	for v := range ro.LimitSlice(all, 10) {
 		res3 = append(res3, v)
 	}
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
 }
 
 func TestLimit(t *testing.T) {
-	seq := []int{1, 2, 3, 4, 5, 6, 7, 8}
 	res := []int{}
-	for v := range ro.Limit(seq, 5) {
+	for v := range ro.Limit(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8}), 5) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, res)
-
-	empty := []int{}
 	res2 := []int{}
-	for v := range ro.Limit(empty, 5) {
+	for v := range ro.Limit(ro.FromSlice([]int{}), 5) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 
 	all := []int{1, 2, 3, 4, 5}
 	res3 := []int{}
-	for v := range ro.Limit(all, 10) {
+	for v := range ro.Limit(ro.FromSlice(all), 10) {
 		res3 = append(res3, v)
 	}
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
 }
 
-func TestLimitIter(t *testing.T) {
+func TestApplySlice(t *testing.T) {
+	seq := []int{1, 2, 3, 4, 5}
 	res := []int{}
-	for v := range ro.LimitIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5, 6, 7, 8}), 5) {
+	for v := range ro.ApplySlice(seq, func(i int) int { return i * 2 }) {
 		res = append(res, v)
 	}
-	assert.Equal(t, []int{1, 2, 3, 4, 5}, res)
+	assert.Equal(t, []int{2, 4, 6, 8, 10}, res)
+
+	empty := []int{}
 	res2 := []int{}
-	for v := range ro.LimitIter(ro.SeqAsIter([]int{}), 5) {
+	for v := range ro.ApplySlice(empty, func(i int) int { return i * 2 }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
-
-	all := []int{1, 2, 3, 4, 5}
-	res3 := []int{}
-	for v := range ro.LimitIter(ro.SeqAsIter(all), 10) {
-		res3 = append(res3, v)
-	}
-	assert.Equal(t, []int{1, 2, 3, 4, 5}, res3)
 }
 
 func TestApply(t *testing.T) {
-	seq := []int{1, 2, 3, 4, 5}
 	res := []int{}
-	for v := range ro.Apply(seq, func(i int) int { return i * 2 }) {
-		res = append(res, v)
-	}
-	assert.Equal(t, []int{2, 4, 6, 8, 10}, res)
-
-	empty := []int{}
-	res2 := []int{}
-	for v := range ro.Apply(empty, func(i int) int { return i * 2 }) {
-		res2 = append(res2, v)
-	}
-	assert.Equal(t, []int{}, res2)
-}
-
-func TestApplyIter(t *testing.T) {
-	res := []int{}
-	for v := range ro.ApplyIter(ro.SeqAsIter([]int{1, 2, 3, 4, 5}), func(i int) int { return i * 2 }) {
+	for v := range ro.Apply(ro.FromSlice([]int{1, 2, 3, 4, 5}), func(i int) int { return i * 2 }) {
 		res = append(res, v)
 	}
 	assert.Equal(t, []int{2, 4, 6, 8, 10}, res)
 
 	res2 := []int{}
-	for v := range ro.ApplyIter(ro.SeqAsIter([]int{}), func(i int) int { return i * 2 }) {
+	for v := range ro.Apply(ro.FromSlice([]int{}), func(i int) int { return i * 2 }) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
 }
 
 func TestTee(t *testing.T) {
-	iters := ro.Tee(ro.SeqAsIter([]int{1, 2, 3, 4, 5}), 3)
+	iters := ro.Tee(ro.FromSlice([]int{1, 2, 3, 4, 5}), 3)
 
 	res := []int{}
 	res1 := []int{}
@@ -369,14 +369,14 @@ func TestTee(t *testing.T) {
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, res1)
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, res2)
 
-	noiters := ro.Tee(ro.SeqAsIter([]int{1, 2, 3, 4}), -5)
+	noiters := ro.Tee(ro.FromSlice([]int{1, 2, 3, 4}), -5)
 	assert.Len(t, noiters, 0)
 
 	type testStruct struct {
 		val string
 	}
 
-	iters2 := ro.Tee(ro.SeqAsIter([]*testStruct{{val: "a"}, {val: "b"}, {val: "c"}}), 3)
+	iters2 := ro.Tee(ro.FromSlice([]*testStruct{{val: "a"}, {val: "b"}, {val: "c"}}), 3)
 	resMut := [][]*testStruct{{}, {}, {}}
 
 	var wg sync.WaitGroup
@@ -402,5 +402,4 @@ func TestTee(t *testing.T) {
 			assert.Equal(t, fmt.Sprintf("replace%d", i), item.val)
 		}
 	}
-
 }

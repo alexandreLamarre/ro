@@ -5,8 +5,8 @@ package ro
 import "iter"
 
 // Count returns an infinite iterator starting from start and incrementing by step
-func Count[i intType](start, step i) iter.Seq[i] {
-	return func(yield func(i) bool) {
+func Count[T intType](start, step T) iter.Seq[T] {
+	return func(yield func(T) bool) {
 		for i := start; ; i += step {
 			if !yield(i) {
 				break
@@ -16,19 +16,19 @@ func Count[i intType](start, step i) iter.Seq[i] {
 }
 
 // Repeat returns an infinite iterator that yields elem indefinitely
-func Repeat[i intType](elem i) iter.Seq[i] {
+func Repeat[T intType](elem T) iter.Seq[T] {
 	return Count(elem, 0)
 }
 
-// Cycle returns an infinite iterator that cycles repeatedly through the elements of seq
-func Cycle[V any](seq []V) iter.Seq[V] {
+// CycleSlice returns an infinite iterator that cycles repeatedly through the elements of the slice
+func CycleSlice[T any](arr []T) iter.Seq[T] {
 	done := false
-	if len(seq) == 0 {
-		return empty[V]()
+	if len(arr) == 0 {
+		return empty[T]()
 	}
-	return func(yield func(V) bool) {
+	return func(yield func(T) bool) {
 		for {
-			for _, v := range seq {
+			for _, v := range arr {
 				if !yield(v) {
 					done = true
 					break
@@ -41,10 +41,10 @@ func Cycle[V any](seq []V) iter.Seq[V] {
 	}
 }
 
-// CycleIter returns an infinite iterator that cycles repeatedly through the elements of seq
-func CycleIter[V any](seq iter.Seq[V]) iter.Seq[V] {
+// Cycle returns an infinite iterator that cycles repeatedly through the elements of sequence
+func Cycle[T any](seq iter.Seq[T]) iter.Seq[T] {
 	done := false
-	return func(yield func(V) bool) {
+	return func(yield func(T) bool) {
 		for {
 			for v := range seq {
 				if !yield(v) {

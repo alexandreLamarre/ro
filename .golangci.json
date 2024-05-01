@@ -11,9 +11,11 @@
         ]
     },
     "run": {
-        "skip-files": [
-            "/zz_generated_"
-        ],
+        "issues": {
+            "exclude-files": [
+                "/zz_generated_"
+            ]
+        },
         "deadline": "5m"
     }
 }

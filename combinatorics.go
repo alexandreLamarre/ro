@@ -9,20 +9,20 @@ import (
 	"github.com/samber/lo"
 )
 
-// Zip returns an iterator that yields the elements of seq1 and seq2 as a tuple
-func Zip[U, V any](seq1 []U, seq2 []V) iter.Seq[lo.Tuple2[U, V]] {
+// ZipSlice returns an iterator that yields the elements of arr1 and arr2 as a tuple
+func ZipSlice[U, V any](arr1 []U, arr2 []V) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
-		for i := 0; i < len(seq1) && i < len(seq2); i++ {
+		for i := 0; i < len(arr1) && i < len(arr2); i++ {
 
-			if !yield(lo.Tuple2[U, V]{A: seq1[i], B: seq2[i]}) {
+			if !yield(lo.Tuple2[U, V]{A: arr1[i], B: arr2[i]}) {
 				break
 			}
 		}
 	}
 }
 
-// ZipIter returns an iterator that yields the elements of seq1 and seq2 as a tuple
-func ZipIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U, V]] {
+// Zip returns an iterator that yields the elements of seq1 and seq2 as a tuple
+func Zip[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
 		p1, stop1 := iter.Pull(seq1)
 		defer stop1()
@@ -40,18 +40,18 @@ func ZipIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U,
 	}
 }
 
-// ZipFill returns an iterator that yields the elements of seq1 and seq2 as a tuple, padding missing values as necessary
-func ZipFill[U, V any](seq1 []U, seq2 []V, fillU U, fillV V) iter.Seq[lo.Tuple2[U, V]] {
+// ZipFillSlice returns an iterator that yields the elements of arr1 and arr2 as a tuple, padding missing values as necessary
+func ZipFillSlice[U, V any](arr1 []U, arr2 []V, fillU U, fillV V) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
-		for i := 0; i < len(seq1) || i < len(seq2); i++ {
+		for i := 0; i < len(arr1) || i < len(arr2); i++ {
 			var val lo.Tuple2[U, V]
-			if i < len(seq1) {
-				val.A = seq1[i]
+			if i < len(arr1) {
+				val.A = arr1[i]
 			} else {
 				val.A = fillU
 			}
-			if i < len(seq2) {
-				val.B = seq2[i]
+			if i < len(arr2) {
+				val.B = arr2[i]
 			} else {
 				val.B = fillV
 			}
@@ -63,7 +63,7 @@ func ZipFill[U, V any](seq1 []U, seq2 []V, fillU U, fillV V) iter.Seq[lo.Tuple2[
 }
 
 // ZipFill returns an iterator that yields the elements of seq1 and seq2 as a tuple, padding missing values as necessary
-func ZipFillIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V], fillU U, fillV V) iter.Seq[lo.Tuple2[U, V]] {
+func ZipFill[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V], fillU U, fillV V) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
 		p1, stop1 := iter.Pull(seq1)
 		defer stop1()
@@ -91,12 +91,12 @@ func ZipFillIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V], fillU U, fillV V)
 	}
 }
 
-// Product returns an iterator that yields the cartesian product of seq1 and seq2 as a tuple.
+// ProductSlice returns an iterator that yields the cartesian product of slice1 and slice2 as a tuple.
 // The returned iterator of tuples is ordered [A1, B1], [A1, B2], [A2, B1], [A2, B2], ...
-func Product[U, V any](seq1 []U, seq2 []V) iter.Seq[lo.Tuple2[U, V]] {
+func ProductSlice[U, V any](arr1 []U, arr2 []V) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
-		for _, u := range seq1 {
-			for _, v := range seq2 {
+		for _, u := range arr1 {
+			for _, v := range arr2 {
 				if !yield(lo.Tuple2[U, V]{A: u, B: v}) {
 					return
 				}
@@ -105,9 +105,11 @@ func Product[U, V any](seq1 []U, seq2 []V) iter.Seq[lo.Tuple2[U, V]] {
 	}
 }
 
-// ProductIter returns an iterator that yields the cartesian product of seq1 and seq2 as a tuple.
+// Product returns an iterator that yields the cartesian product of seq1 and seq2 as a tuple.
 // The returned iterator of tuples is ordered [A1, B1], [A1, B2], [A2, B1], [A2, B2], ...
-func ProductIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U, V]] {
+//
+// Expects to fully consume seq1 before seq2
+func Product[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
 		for u := range seq1 {
 			for v := range seq2 {
@@ -119,25 +121,25 @@ func ProductIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple
 	}
 }
 
-// Permutations returns an iterator that yields all possible n-length permutations of seq
+// Permutations returns an iterator that yields all possible n-length permutations of the slice
 // If k <= 0, the empty iterator is returned.
 // If k > len(seq), the iterator yields all permutations of seq
 //
 // Note : allocates a state buffer of the same size as the input to keep track of visited permutations
 // as we iterate through them.
-func Permutations[T any](seq []T, k int) iter.Seq[[]T] {
+func Permutations[T any](arr []T, k int) iter.Seq[[]T] {
 	if k <= 0 {
 		return empty[[]T]()
 	}
 
-	if k > len(seq) {
-		k = len(seq)
+	if k > len(arr) {
+		k = len(arr)
 	}
 
 	return func(yield func([]T) bool) {
-		n := len(seq)
+		n := len(arr)
 		output := make([]T, k)
-		copy(output, seq)
+		copy(output, arr)
 		if !yield(output) {
 			return
 		}
@@ -146,12 +148,12 @@ func Permutations[T any](seq []T, k int) iter.Seq[[]T] {
 		for i < n {
 			if state[i] < i {
 				if i%2 == 0 {
-					seq[0], seq[i] = seq[i], seq[0]
+					arr[0], arr[i] = arr[i], arr[0]
 				} else {
-					seq[state[i]], seq[i] = seq[i], seq[state[i]]
+					arr[state[i]], arr[i] = arr[i], arr[state[i]]
 				}
 				output := make([]T, k)
-				copy(output, seq)
+				copy(output, arr)
 				if !yield(output) {
 					return
 				}
@@ -165,16 +167,16 @@ func Permutations[T any](seq []T, k int) iter.Seq[[]T] {
 	}
 }
 
-// Combinations returns an iterator that yields all possible k-length combinations of seq
+// Combinations returns an iterator that yields all possible k-length combinations of the slice
 // If k <= 0, the empty iterator is returned.
 // If k > len(seq), the iterator yields all combinations of seq
-func Combinations[T any](seq []T, k int) iter.Seq[[]T] {
-	length := uint(len(seq))
+func Combinations[T any](arr []T, k int) iter.Seq[[]T] {
+	length := uint(len(arr))
 	if k <= 0 {
 		return empty[[]T]()
 	}
-	if k > len(seq) {
-		k = len(seq)
+	if k > len(arr) {
+		k = len(arr)
 	}
 	return func(yield func([]T) bool) {
 		for subsetBits := 1; subsetBits < (1 << length); subsetBits++ {
@@ -186,7 +188,7 @@ func Combinations[T any](seq []T, k int) iter.Seq[[]T] {
 
 			for object := uint(0); object < length; object++ {
 				if (subsetBits>>object)&1 == 1 {
-					subset = append(subset, seq[object])
+					subset = append(subset, arr[object])
 				}
 			}
 			if !yield(subset) {
@@ -194,5 +196,4 @@ func Combinations[T any](seq []T, k int) iter.Seq[[]T] {
 			}
 		}
 	}
-
 }
