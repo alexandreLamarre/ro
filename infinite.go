@@ -20,8 +20,8 @@ func Repeat[T intType](elem T) iter.Seq[T] {
 	return Count(elem, 0)
 }
 
-// Cycle returns an infinite iterator that cycles repeatedly through the elements of the array
-func Cycle[T any](arr []T) iter.Seq[T] {
+// CycleSlice returns an infinite iterator that cycles repeatedly through the elements of the slice
+func CycleSlice[T any](arr []T) iter.Seq[T] {
 	done := false
 	if len(arr) == 0 {
 		return empty[T]()
@@ -41,8 +41,8 @@ func Cycle[T any](arr []T) iter.Seq[T] {
 	}
 }
 
-// CycleIter returns an infinite iterator that cycles repeatedly through the elements of sequence
-func CycleIter[T any](seq iter.Seq[T]) iter.Seq[T] {
+// Cycle returns an infinite iterator that cycles repeatedly through the elements of sequence
+func Cycle[T any](seq iter.Seq[T]) iter.Seq[T] {
 	done := false
 	return func(yield func(T) bool) {
 		for {

@@ -44,11 +44,11 @@ func TestCount(t *testing.T) {
 	assert.Equal(t, []int8{1, 2, 3}, res3)
 }
 
-func TestCycle(t *testing.T) {
+func TestCycleSlice(t *testing.T) {
 	s := []string{"a", "b", "c"}
 	res := []string{}
 	n := len(s) * 2
-	for v := range ro.Cycle(s) {
+	for v := range ro.CycleSlice(s) {
 		res = append(res, v)
 		n--
 		if n == 0 {
@@ -60,7 +60,7 @@ func TestCycle(t *testing.T) {
 	nan := []int{}
 	res2 := []int{}
 	n = 10
-	for v := range ro.Cycle(nan) {
+	for v := range ro.CycleSlice(nan) {
 		res2 = append(res2, v)
 		n--
 		if n == 0 {
@@ -70,11 +70,11 @@ func TestCycle(t *testing.T) {
 	assert.Equal(t, []int{}, res2)
 }
 
-func TestCycleIter(t *testing.T) {
+func TestCycle(t *testing.T) {
 	s := []string{"a", "b", "c"}
 	res := []string{}
 	n := len(s) * 2
-	for v := range ro.CycleIter(ro.FromSlice(s)) {
+	for v := range ro.Cycle(ro.FromSlice(s)) {
 		res = append(res, v)
 		n--
 		if n == 0 {

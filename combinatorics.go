@@ -9,8 +9,8 @@ import (
 	"github.com/samber/lo"
 )
 
-// Zip returns an iterator that yields the elements of arr1 and arr2 as a tuple
-func Zip[U, V any](arr1 []U, arr2 []V) iter.Seq[lo.Tuple2[U, V]] {
+// ZipSlice returns an iterator that yields the elements of arr1 and arr2 as a tuple
+func ZipSlice[U, V any](arr1 []U, arr2 []V) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
 		for i := 0; i < len(arr1) && i < len(arr2); i++ {
 
@@ -21,8 +21,8 @@ func Zip[U, V any](arr1 []U, arr2 []V) iter.Seq[lo.Tuple2[U, V]] {
 	}
 }
 
-// ZipIter returns an iterator that yields the elements of seq1 and seq2 as a tuple
-func ZipIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U, V]] {
+// Zip returns an iterator that yields the elements of seq1 and seq2 as a tuple
+func Zip[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
 		p1, stop1 := iter.Pull(seq1)
 		defer stop1()
@@ -40,8 +40,8 @@ func ZipIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U,
 	}
 }
 
-// ZipFill returns an iterator that yields the elements of arr1 and arr2 as a tuple, padding missing values as necessary
-func ZipFill[U, V any](arr1 []U, arr2 []V, fillU U, fillV V) iter.Seq[lo.Tuple2[U, V]] {
+// ZipFillSlice returns an iterator that yields the elements of arr1 and arr2 as a tuple, padding missing values as necessary
+func ZipFillSlice[U, V any](arr1 []U, arr2 []V, fillU U, fillV V) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
 		for i := 0; i < len(arr1) || i < len(arr2); i++ {
 			var val lo.Tuple2[U, V]
@@ -63,7 +63,7 @@ func ZipFill[U, V any](arr1 []U, arr2 []V, fillU U, fillV V) iter.Seq[lo.Tuple2[
 }
 
 // ZipFill returns an iterator that yields the elements of seq1 and seq2 as a tuple, padding missing values as necessary
-func ZipFillIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V], fillU U, fillV V) iter.Seq[lo.Tuple2[U, V]] {
+func ZipFill[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V], fillU U, fillV V) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
 		p1, stop1 := iter.Pull(seq1)
 		defer stop1()
@@ -91,9 +91,9 @@ func ZipFillIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V], fillU U, fillV V)
 	}
 }
 
-// Product returns an iterator that yields the cartesian product of slice1 and slice2 as a tuple.
+// ProductSlice returns an iterator that yields the cartesian product of slice1 and slice2 as a tuple.
 // The returned iterator of tuples is ordered [A1, B1], [A1, B2], [A2, B1], [A2, B2], ...
-func Product[U, V any](arr1 []U, arr2 []V) iter.Seq[lo.Tuple2[U, V]] {
+func ProductSlice[U, V any](arr1 []U, arr2 []V) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
 		for _, u := range arr1 {
 			for _, v := range arr2 {
@@ -105,9 +105,11 @@ func Product[U, V any](arr1 []U, arr2 []V) iter.Seq[lo.Tuple2[U, V]] {
 	}
 }
 
-// ProductIter returns an iterator that yields the cartesian product of seq1 and seq2 as a tuple.
+// Product returns an iterator that yields the cartesian product of seq1 and seq2 as a tuple.
 // The returned iterator of tuples is ordered [A1, B1], [A1, B2], [A2, B1], [A2, B2], ...
-func ProductIter[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U, V]] {
+//
+// Expects to fully consume seq1 before seq2
+func Product[U, V any](seq1 iter.Seq[U], seq2 iter.Seq[V]) iter.Seq[lo.Tuple2[U, V]] {
 	return func(yield func(lo.Tuple2[U, V]) bool) {
 		for u := range seq1 {
 			for v := range seq2 {

@@ -6,8 +6,8 @@ import (
 	"iter"
 )
 
-// Accumulate returns an iterator that yields the accumulated sum of the elements in the slice
-func Accumulate[T intType](arr []T) iter.Seq[T] {
+// AccumulateSlice returns an iterator that yields the accumulated sum of the elements in the slice
+func AccumulateSlice[T intType](arr []T) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		sum := T(0)
 		for _, v := range arr {
@@ -19,8 +19,8 @@ func Accumulate[T intType](arr []T) iter.Seq[T] {
 	}
 }
 
-// AccumulateIter returns an iterator that yields the accumulated sum of the elements yielded by seq
-func AccumulateIter[T intType](seq iter.Seq[T]) iter.Seq[T] {
+// Accumulate returns an iterator that yields the accumulated sum of the elements yielded by seq
+func Accumulate[T intType](seq iter.Seq[T]) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		sum := T(0)
 		for v := range seq {
@@ -32,8 +32,8 @@ func AccumulateIter[T intType](seq iter.Seq[T]) iter.Seq[T] {
 	}
 }
 
-// AccumulateFunc returns an iterator that yields the accumulated result of applying f to the elements in the slice
-func AccumulateFunc[T any](arr []T, f func(T, T) T) iter.Seq[T] {
+// AccumulateFuncSlice returns an iterator that yields the accumulated result of applying f to the elements in the slice
+func AccumulateFuncSlice[T any](arr []T, f func(T, T) T) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		var agg T
 		for _, v := range arr {
@@ -45,8 +45,8 @@ func AccumulateFunc[T any](arr []T, f func(T, T) T) iter.Seq[T] {
 	}
 }
 
-// AccumulateIterFunc returns an iterator that yields the accumulated result of applying f to the elements yielded by seq
-func AccumulateIterFunc[T any](seq iter.Seq[T], f func(T, T) T) iter.Seq[T] {
+// AccumulateFunc returns an iterator that yields the accumulated result of applying f to the elements yielded by seq
+func AccumulateFunc[T any](seq iter.Seq[T], f func(T, T) T) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		var agg T
 		for v := range seq {
@@ -58,8 +58,8 @@ func AccumulateIterFunc[T any](seq iter.Seq[T], f func(T, T) T) iter.Seq[T] {
 	}
 }
 
-// Batch returns an iterator that yields batches of size elements from the slice
-func Batch[T any](arr []T, size int) iter.Seq[[]T] {
+// BatchSlice returns an iterator that yields batches of size elements from the slice
+func BatchSlice[T any](arr []T, size int) iter.Seq[[]T] {
 	return func(yield func([]T) bool) {
 		for i := 0; i < len(arr); i += size {
 			end := min(i+size, len(arr))
@@ -70,8 +70,8 @@ func Batch[T any](arr []T, size int) iter.Seq[[]T] {
 	}
 }
 
-// BatchIter returns an iterator that yields batches of size elements yielded by seq
-func BatchIter[T any](seq iter.Seq[T], size int) iter.Seq[[]T] {
+// Batch returns an iterator that yields batches of size elements yielded by seq
+func Batch[T any](seq iter.Seq[T], size int) iter.Seq[[]T] {
 	return func(yield func([]T) bool) {
 		batch := []T{}
 		for v := range seq {
@@ -89,8 +89,8 @@ func BatchIter[T any](seq iter.Seq[T], size int) iter.Seq[[]T] {
 	}
 }
 
-// Chain returns an iterator that yields the elements of the slice in order
-func Chain[T any](arr ...[]T) iter.Seq[T] {
+// ChainSlice returns an iterator that yields the elements of the slice in order
+func ChainSlice[T any](arr ...[]T) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for _, seq := range arr {
 			for _, v := range seq {
@@ -102,8 +102,8 @@ func Chain[T any](arr ...[]T) iter.Seq[T] {
 	}
 }
 
-// ChainIter returns an iterator that yields the elements yielded by seqs in order
-func ChainIter[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
+// Chain returns an iterator that yields the elements yielded by seqs in order
+func Chain[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for _, it := range seqs {
 			for v := range it {
@@ -115,8 +115,8 @@ func ChainIter[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
 	}
 }
 
-// Drop returns an iterator that yields elements not matching the predicate
-func Drop[T any](arr []T, predicate func(T) bool) iter.Seq[T] {
+// DropSlice returns an iterator that yields elements not matching the predicate
+func DropSlice[T any](arr []T, predicate func(T) bool) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for _, v := range arr {
 			if !predicate(v) {
@@ -128,11 +128,24 @@ func Drop[T any](arr []T, predicate func(T) bool) iter.Seq[T] {
 	}
 }
 
-// DropIter returns an iterator that yields elements not matching the predicate
-func DropIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
+// Drop returns an iterator that yields elements not matching the predicate
+func Drop[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for v := range seq {
 			if !predicate(v) {
+				if !yield(v) {
+					break
+				}
+			}
+		}
+	}
+}
+
+// FilterSlice returns an iterator that yields elements matching the predicate
+func FilterSlice[T any](arr []T, predicate func(T) bool) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, v := range arr {
+			if predicate(v) {
 				if !yield(v) {
 					break
 				}
@@ -142,20 +155,7 @@ func DropIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 }
 
 // Filter returns an iterator that yields elements matching the predicate
-func Filter[T any](arr []T, predicate func(T) bool) iter.Seq[T] {
-	return func(yield func(T) bool) {
-		for _, v := range arr {
-			if predicate(v) {
-				if !yield(v) {
-					break
-				}
-			}
-		}
-	}
-}
-
-// FilterIter returns an iterator that yields elements matching the predicate
-func FilterIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
+func Filter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for v := range seq {
 			if predicate(v) {
@@ -167,9 +167,9 @@ func FilterIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 	}
 }
 
-// Pairwise returns an iterator that yields pairs of adjacent elements in the slice
+// PairwiseSlice returns an iterator that yields pairs of adjacent elements in the slice
 // If the slice has less than 2 elements, the empty iterator is returned
-func PairWise[T any](arr []T) iter.Seq[[2]T] {
+func PairWiseSlice[T any](arr []T) iter.Seq[[2]T] {
 	return func(yield func([2]T) bool) {
 		if len(arr) < 2 {
 			return
@@ -182,9 +182,9 @@ func PairWise[T any](arr []T) iter.Seq[[2]T] {
 	}
 }
 
-// PairWiseIter returns an iterator that yields pairs of adjacent elements yielded by seq
+// PairWise returns an iterator that yields pairs of adjacent elements yielded by seq
 // If the sequence has less than 2 elements, the empty iterator is returned
-func PairWiseIter[T any](seq iter.Seq[T]) iter.Seq[[2]T] {
+func PairWise[T any](seq iter.Seq[T]) iter.Seq[[2]T] {
 	return func(yield func([2]T) bool) {
 		var prev T
 		first := true
@@ -202,8 +202,8 @@ func PairWiseIter[T any](seq iter.Seq[T]) iter.Seq[[2]T] {
 	}
 }
 
-// While returns an iterator that yields elements of the slice until the predicate is false
-func While[T any](arr []T, predicate func(T) bool) iter.Seq[T] {
+// WhileSlice returns an iterator that yields elements of the slice until the predicate is false
+func WhileSlice[T any](arr []T, predicate func(T) bool) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for _, v := range arr {
 			if !predicate(v) {
@@ -216,8 +216,8 @@ func While[T any](arr []T, predicate func(T) bool) iter.Seq[T] {
 	}
 }
 
-// WhileIter returns an iterator that yields elements of the sequence until the predicate is false
-func WhileIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
+// While returns an iterator that yields elements of the sequence until the predicate is false
+func While[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for v := range seq {
 			if !predicate(v) {
@@ -230,8 +230,8 @@ func WhileIter[T any](seq iter.Seq[T], predicate func(T) bool) iter.Seq[T] {
 	}
 }
 
-// Limit returns an iterator that yields the up to the first n elements of the slice
-func Limit[T any](arr []T, n int) iter.Seq[T] {
+// LimitSlice returns an iterator that yields the up to the first n elements of the slice
+func LimitSlice[T any](arr []T, n int) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for i, v := range arr {
 			if i >= n {
@@ -244,8 +244,8 @@ func Limit[T any](arr []T, n int) iter.Seq[T] {
 	}
 }
 
-// LimitIter returns an iterator that yields the up to the first n elements yielded by the sequence
-func LimitIter[T any](seq iter.Seq[T], n int) iter.Seq[T] {
+// Limit returns an iterator that yields the up to the first n elements yielded by the sequence
+func Limit[T any](seq iter.Seq[T], n int) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		k := 0
 		for v := range seq {
@@ -260,8 +260,8 @@ func LimitIter[T any](seq iter.Seq[T], n int) iter.Seq[T] {
 	}
 }
 
-// Apply returns an iterator that yields the result of applying f to each element in the slice
-func Apply[U, V any](arr []U, f func(U) V) iter.Seq[V] {
+// ApplySlice returns an iterator that yields the result of applying f to each element in the slice
+func ApplySlice[U, V any](arr []U, f func(U) V) iter.Seq[V] {
 	return func(yield func(V) bool) {
 		for _, v := range arr {
 			if !yield(f(v)) {
@@ -271,8 +271,8 @@ func Apply[U, V any](arr []U, f func(U) V) iter.Seq[V] {
 	}
 }
 
-// ApplyIter returns an iterator that yields the result of applying f to each element yielded by the sequence
-func ApplyIter[U, V any](seq iter.Seq[U], f func(U) V) iter.Seq[V] {
+// Apply returns an iterator that yields the result of applying f to each element yielded by the sequence
+func Apply[U, V any](seq iter.Seq[U], f func(U) V) iter.Seq[V] {
 	return func(yield func(V) bool) {
 		for v := range seq {
 			if !yield(f(v)) {
