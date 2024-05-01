@@ -4,6 +4,7 @@ package ro_test
 
 import (
 	"fmt"
+	"iter"
 	"sync"
 	"testing"
 
@@ -348,6 +349,66 @@ func TestApply(t *testing.T) {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []int{}, res2)
+}
+
+func sliceFullIter[T any](arr []T) iter.Seq2[int, T] {
+	return func(yield func(int, T) bool) {
+		for i, v := range arr {
+			if !yield(i, v) {
+				break
+			}
+		}
+
+	}
+}
+
+func TestUnpack(t *testing.T) {
+	resK := []int{}
+	resV := []int{}
+	ik, iv := ro.Unpack(sliceFullIter([]int{6, 5, 4, 3, 2, 1}))
+	for v := range ik {
+		resK = append(resK, v)
+	}
+	for v := range iv {
+		resV = append(resV, v)
+	}
+	assert.Equal(t, []int{0, 1, 2, 3, 4, 5}, resK)
+	assert.Equal(t, []int{6, 5, 4, 3, 2, 1}, resV)
+
+	// if values are interrupted before keys, the keys should be unaffected
+
+	resK2 := []int{}
+	resV2 := []int{}
+	ik2, iv2 := ro.Unpack(sliceFullIter([]int{6, 5, 4, 3, 2, 1}))
+
+	for v := range iv2 {
+		resV2 = append(resV2, v)
+		break
+	}
+
+	for k := range ik2 {
+		resK2 = append(resK2, k)
+	}
+	assert.Equal(t, []int{0, 1, 2, 3, 4, 5}, resK2)
+	assert.Equal(t, []int{6}, resV2)
+
+	// if keys are interrupted before values, the values should be unaffected
+
+	resK3 := []int{}
+	resV3 := []int{}
+	ik3, iv3 := ro.Unpack(sliceFullIter([]int{6, 5, 4, 3, 2, 1}))
+
+	for k := range ik3 {
+		resK3 = append(resK3, k)
+		break
+	}
+
+	for v := range iv3 {
+		resV3 = append(resV3, v)
+	}
+
+	assert.Equal(t, []int{0}, resK3)
+	assert.Equal(t, []int{6, 5, 4, 3, 2, 1}, resV3)
 }
 
 func TestTee(t *testing.T) {
