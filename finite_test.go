@@ -33,4 +33,11 @@ func TestRange(t *testing.T) {
 		r4 = append(r4, v)
 	}
 	assert.Equal(t, []int8{1, 3, 5, 7, 9}, r4)
+
+	r5 := []int8{}
+	for v := range ro.Range(int8(1), int8(10), int8(2)) {
+		r5 = append(r5, v)
+		break
+	}
+	assert.Equal(t, []int8{1}, r5)
 }
