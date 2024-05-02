@@ -78,7 +78,7 @@ func Batch[T any](seq iter.Seq[T], size int) iter.Seq[[]T] {
 			batch = append(batch, v)
 			if len(batch) == size {
 				if !yield(batch) {
-					break
+					return
 				}
 				batch = []T{}
 			}

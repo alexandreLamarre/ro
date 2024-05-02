@@ -55,12 +55,19 @@ func TestFromString(t *testing.T) {
 	assert.Equal(t, []rune{'a', 'b', 'c'}, res)
 
 	i2 := ro.FromString("")
-
 	res2 := []rune{}
 	for v := range i2 {
 		res2 = append(res2, v)
 	}
 	assert.Equal(t, []rune{}, res2)
+
+	i3 := ro.FromString("abc")
+	res3 := []rune{}
+	for v := range i3 {
+		res3 = append(res3, v)
+		break
+	}
+	assert.Equal(t, []rune{'a'}, res3)
 }
 
 func iter2ToTuple[U, V any](seq iter.Seq2[U, V]) []lo.Tuple2[U, V] {
@@ -84,4 +91,15 @@ func TestExtend(t *testing.T) {
 	i2 := ro.FromSlice([]string{})
 	kv2 := ro.Extend(i2)
 	assert.Equal(t, []lo.Tuple2[struct{}, string]{}, iter2ToTuple(kv2))
+
+	i3 := ro.FromSlice([]int{1, 2, 3})
+	kv3 := ro.Extend(i3)
+	res3 := []lo.Tuple2[struct{}, int]{}
+	for k, v := range kv3 {
+		res3 = append(res3, lo.Tuple2[struct{}, int]{A: k, B: v})
+		break
+	}
+	assert.Equal(t, []lo.Tuple2[struct{}, int]{
+		{A: struct{}{}, B: 1},
+	}, res3)
 }

@@ -5,6 +5,7 @@
 [![GoDoc](https://godoc.org/github.com/alexandreLamarre/ro?status.svg)](https://pkg.go.dev/github.com/alexandreLamarre/ro)
 [![Lint](https://github.com/alexandreLamarre/ro/actions/workflows/lint.yaml/badge.svg)](https://github.com/alexandreLamarre/ro/actions/workflows/lint.yaml)
 [![Test](https://github.com/alexandreLamarre/ro/actions/workflows/test.yaml/badge.svg)](https://github.com/alexandreLamarre/ro/actions/workflows/test.yaml)
+[![Coverage](https://img.shields.io/codecov/c/github/alexandreLamarre/ro)](https://codecov.io/gh/alexandreLamarre/ro)
 [![License](https://img.shields.io/github/license/alexandreLamarre/ro)](./LICENSE)
 
 
