@@ -473,6 +473,26 @@ func TestUnpackMap(t *testing.T) {
 	assert.Equal(t, []int{}, resV4)
 }
 
+func TestIndex(t *testing.T) {
+	res := []int{}
+	ind := []int{}
+	for i, v := range ro.Index(ro.FromSlice([]int{1, 2, 3, 4, 5})) {
+		ind = append(ind, i)
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, res)
+	assert.Equal(t, []int{0, 1, 2, 3, 4}, ind)
+
+	res2 := []int{}
+	ind2 := []int{}
+	for i, v := range ro.Index(ro.FromSlice([]int{})) {
+		res2 = append(res2, v)
+		ind2 = append(ind2, i)
+	}
+	assert.Equal(t, []int{}, res2)
+	assert.Equal(t, []int{}, ind2)
+}
+
 func TestTee(t *testing.T) {
 	iters := ro.Tee(ro.FromSlice([]int{1, 2, 3, 4, 5}), 3)
 

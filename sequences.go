@@ -321,6 +321,19 @@ func UnpackMap[U comparable, V any](in map[U]V) (iter.Seq[U], iter.Seq[V]) {
 	return keys, vals
 }
 
+// Index returns an iterator that yields the index and value of the yielded elements from the sequence
+func Index[T any](seq iter.Seq[T]) iter.Seq2[int, T] {
+	return func(yield func(int, T) bool) {
+		i := 0
+		for v := range seq {
+			if !yield(i, v) {
+				break
+			}
+			i++
+		}
+	}
+}
+
 // Tee returns n iterators that yield the elements of the sequence
 // If n == 1, the only element in the slice will be the original seq
 func Tee[T any](seq iter.Seq[T], n int) []iter.Seq[T] {
