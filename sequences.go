@@ -282,6 +282,58 @@ func Apply[U, V any](seq iter.Seq[U], f func(U) V) iter.Seq[V] {
 	}
 }
 
+// Unpack returns two iterators that yield the keys and values of the sequence
+func Unpack[U, V any](seq iter.Seq2[U, V]) (iter.Seq[U], iter.Seq[V]) {
+	keys := func(yield func(U) bool) {
+		// nolint:revive
+		for k, _ := range seq {
+			if !yield(k) {
+				break
+			}
+		}
+	}
+	vals := func(yield func(V) bool) {
+		for _, v := range seq {
+			if !yield(v) {
+				break
+			}
+		}
+	}
+	return keys, vals
+}
+
+// UnpackMap returns two iterators that yield the keys and values of the map
+func UnpackMap[U comparable, V any](in map[U]V) (iter.Seq[U], iter.Seq[V]) {
+	keys := func(yield func(U) bool) {
+		for k := range in {
+			if !yield(k) {
+				break
+			}
+		}
+	}
+	vals := func(yield func(V) bool) {
+		for _, v := range in {
+			if !yield(v) {
+				break
+			}
+		}
+	}
+	return keys, vals
+}
+
+// Index returns an iterator that yields the index and value of the yielded elements from the sequence
+func Index[T any](seq iter.Seq[T]) iter.Seq2[int, T] {
+	return func(yield func(int, T) bool) {
+		i := 0
+		for v := range seq {
+			if !yield(i, v) {
+				break
+			}
+			i++
+		}
+	}
+}
+
 // Tee returns n iterators that yield the elements of the sequence
 // If n == 1, the only element in the slice will be the original seq
 func Tee[T any](seq iter.Seq[T], n int) []iter.Seq[T] {

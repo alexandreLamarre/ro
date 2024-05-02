@@ -6,8 +6,7 @@
             "revive",
             "goimports",
             "misspell",
-            "ineffassign",
-            "gofmt"
+            "ineffassign"
         ]
     },
     "run": {
