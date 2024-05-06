@@ -334,6 +334,31 @@ func Index[T any](seq iter.Seq[T]) iter.Seq2[int, T] {
 	}
 }
 
+// RangeOver returns an iterator that yields the elements of the sequence from start to stop incrementing by step
+func RangeOver[T any](seq iter.Seq[T], start, step, stop int) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		i := 0
+		k := 0
+		for v := range seq {
+			if i >= stop {
+				break
+			}
+			if i < start {
+				i++
+				continue
+			}
+			if k%step == 0 {
+				if !yield(v) {
+					break
+				}
+			}
+			i++
+			k++
+		}
+	}
+
+}
+
 // Tee returns n iterators that yield the elements of the sequence
 // If n == 1, the only element in the slice will be the original seq
 func Tee[T any](seq iter.Seq[T], n int) []iter.Seq[T] {

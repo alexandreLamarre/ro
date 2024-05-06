@@ -618,6 +618,28 @@ func TestUnpackMap(t *testing.T) {
 	assert.Equal(t, []int{}, resV4)
 }
 
+func TestRangeOver(t *testing.T) {
+	res := []int{}
+	it := ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8})
+	for v := range ro.RangeOver(it, 1, 2, 10) {
+		res = append(res, v)
+	}
+	assert.Equal(t, []int{2, 4, 6, 8}, res)
+
+	res2 := []int{}
+	for v := range ro.RangeOver(ro.FromSlice([]int{}), 0, 2, 5) {
+		res2 = append(res2, v)
+	}
+	assert.Equal(t, []int{}, res2)
+
+	res3 := []int{}
+	for v := range ro.RangeOver(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8}), 0, 2, 10) {
+		res3 = append(res3, v)
+		break
+	}
+	assert.Equal(t, []int{1}, res3)
+}
+
 func TestIndex(t *testing.T) {
 	res := []int{}
 	ind := []int{}
