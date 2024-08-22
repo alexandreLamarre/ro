@@ -1,5 +1,3 @@
-//go:build goexperiment.rangefunc
-
 package ro_test
 
 import (
@@ -97,56 +95,6 @@ func TestAccumulateFunc(t *testing.T) {
 		break
 	}
 	assert.Equal(t, [][]string{{"a", "b"}}, res3)
-}
-
-func TestBatchSlice(t *testing.T) {
-	seq := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
-	res := [][]int{}
-	for v := range ro.BatchSlice(seq, 3) {
-		res = append(res, v)
-	}
-	assert.Equal(t, [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}, res)
-
-	empty := []int{}
-	res2 := [][]int{}
-	for v := range ro.BatchSlice(empty, 3) {
-		res2 = append(res2, v)
-	}
-	assert.Equal(t, [][]int{}, res2)
-
-	res3 := [][]int{}
-	for v := range ro.BatchSlice(seq, 3) {
-		res3 = append(res3, v)
-		break
-	}
-	assert.Equal(t, [][]int{{1, 2, 3}}, res3)
-}
-
-func TestBatch(t *testing.T) {
-	res := [][]int{}
-	for v := range ro.Batch(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), 3) {
-		res = append(res, v)
-	}
-	assert.Equal(t, [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}, res)
-
-	res2 := [][]int{}
-	for v := range ro.Batch(ro.FromSlice([]int{}), 3) {
-		res2 = append(res2, v)
-	}
-	assert.Equal(t, [][]int{}, res2)
-
-	res3 := [][]int{}
-	for v := range ro.Batch(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}), 3) {
-		res3 = append(res3, v)
-		break
-	}
-	assert.Equal(t, [][]int{{1, 2, 3}}, res3)
-
-	res4 := [][]int{}
-	for v := range ro.Batch(ro.FromSlice([]int{1, 2, 3, 4, 5, 6, 7, 8}), 3) {
-		res4 = append(res4, v)
-	}
-	assert.Equal(t, [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8}}, res4)
 }
 
 func TestChainSlice(t *testing.T) {

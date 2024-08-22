@@ -1,6 +1,6 @@
 # ro
 
-![Go Version](https://img.shields.io/badge/Go-%3E%3D%201.22-%23007d9c)
+![Go Version](https://img.shields.io/badge/Go-%3E%3D%201.23-%23007d9c)
 ![Release](https://img.shields.io/github/v/release/alexandreLamarre/ro)
 [![GoDoc](https://godoc.org/github.com/alexandreLamarre/ro?status.svg)](https://pkg.go.dev/github.com/alexandreLamarre/ro)
 [![Lint](https://github.com/alexandreLamarre/ro/actions/workflows/lint.yaml/badge.svg)](https://github.com/alexandreLamarre/ro/actions/workflows/lint.yaml)
@@ -23,11 +23,7 @@ go get github.com/alexandreLamarre/ro@v0.1.0
 
 ## ✔️ Requirements
 
-This library requires you to enable the go experimental feature [rangefunc](https://go.dev/wiki/RangefuncExperiment) :
-
-```sh
-export GOEXPERIMENT=rangefunc
-```
+This library requires you to use go 1.23.X or greater.
 
 ## 💡 Usage
 
