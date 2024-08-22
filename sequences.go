@@ -56,37 +56,6 @@ func AccumulateFunc[T any](seq iter.Seq[T], f func(T, T) T) iter.Seq[T] {
 	}
 }
 
-// BatchSlice returns an iterator that yields batches of size elements from the slice
-func BatchSlice[T any](arr []T, size int) iter.Seq[[]T] {
-	return func(yield func([]T) bool) {
-		for i := 0; i < len(arr); i += size {
-			end := min(i+size, len(arr))
-			if !yield(arr[i:end]) {
-				break
-			}
-		}
-	}
-}
-
-// Batch returns an iterator that yields batches of size elements yielded by seq
-func Batch[T any](seq iter.Seq[T], size int) iter.Seq[[]T] {
-	return func(yield func([]T) bool) {
-		batch := []T{}
-		for v := range seq {
-			batch = append(batch, v)
-			if len(batch) == size {
-				if !yield(batch) {
-					return
-				}
-				batch = []T{}
-			}
-		}
-		if len(batch) > 0 {
-			yield(batch)
-		}
-	}
-}
-
 // ChainSlice returns an iterator that yields the elements of the slice in order
 func ChainSlice[T any](arr ...[]T) iter.Seq[T] {
 	return func(yield func(T) bool) {
