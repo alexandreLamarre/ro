@@ -3,7 +3,7 @@ module github.com/alexandreLamarre/ro
 go 1.23
 
 require (
-	github.com/samber/lo v1.46.0
+	github.com/samber/lo v1.47.0
 	// test dependencies are excluded from CI
 
 	github.com/stretchr/testify v1.9.0
